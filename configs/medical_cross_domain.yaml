@@ -1,0 +1,76 @@
+# 源域设置 (HAM10000)
+source_data_name: 'HAM10000'
+source_data_root: './data/medical/processed'
+source_s_dim: 64  # 语义属性维度
+
+# 目标域设置 (ISIC2019)
+target_data_name: 'ISIC2019'
+target_data_root: './data/medical/processed'
+target_s_dim: 64  # 语义属性维度
+
+# 特征维度
+x_dim: 2048  # ResNet101特征维度
+
+# 隐空间维度
+z_dim: 128  # 可以保持不变
+
+# i/o设置
+result: './result/cross_domain_medical'
+ckpt_dir: './data/checkpoints/gdan_cross_domain_medical'
+vae_dir: './data/checkpoints/cvae_cross_domain_medical'
+vae_ckpt: './data/checkpoints/cvae_cross_domain_medical/cvae_cross_HAM10000_to_ISIC2019_final.pkl'
+best_checkpoint: 'gdan_500.pkl'
+
+# 环境设置
+gpu: '0'
+debug: False
+
+# 评估设置
+num_samples: 500
+K: 1
+classifier: 'knn'
+C: 10.1
+
+# 优化器设置
+epoch: 500
+batch: 64
+steps: -1
+learning_rate: 0.00005
+g_iter: 1
+d_iter: 1
+save_epoch: 10
+
+# 模型设置
+enc: '1200 600'
+dec: '600'
+reg: '512'
+dis: '800'
+
+# 损失权重
+theta1: 0
+theta2: 0
+theta3: 0.2
+theta4: 0.005
+theta5: 0.005
+theta6: 0.1
+theta7: 0.1
+
+# 多Agent系统相关配置
+num_agents: 2
+agent_weight: 0.1
+entropy_weight: 0.02
+
+# 早停和学习率调度
+early_stopping_patience: 20
+lr_scheduler_patience: 5
+lr_scheduler_factor: 0.7
+min_lr: 1e-6
+
+# 梯度裁剪
+gradient_clip: 1.0
+
+# 隐藏层维度
+hidden_dims: [512, 256]
+
+# 添加语义一致性损失权重
+semantic_consistency_weight: 0.1 
