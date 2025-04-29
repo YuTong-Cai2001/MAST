@@ -1,6 +1,7 @@
 # MAST: Multi-Agent Semantic Transformation for Cross-Domain Zero-Shot Learning
 
-This repository contains the official implementation of "Multi-Agent Semantic Transformation (MAST)" for cross-domain zero-shot learning as described in our paper [Paper Title].
+This repository contains the official implementation of "Multi-Agent Semantic Transformation (MAST)" for cross-domain zero-shot learning as described in our paper **Multi-Agent Collaborative Semantic Transformation for Cross-Domain
+ Zero-Shot Learning**.
 
 ## Overview
 MAST is a novel framework that facilitates cross-domain zero-shot learning through collaborative semantic transformation and alignment. It features a multi-agent parallel network extracting diverse semantic features, coupled with a cross-domain alignment mechanism that effectively minimizes domain differences.
