@@ -116,10 +116,11 @@ def main():
     ).cuda()
     
     # 然后初始化优化器
-    cvae_opt = optim.Adam(cvae.parameters(), lr=args.learning_rate * 0.1, weight_decay=0.01)
+    cvae_opt = optim.Adam(cvae.parameters(), lr=args.learning_rate * 0.1, weight_decay=0.01, amsgrad=True)
     semantic_transform_opt = optim.Adam(semantic_transform.parameters(), 
                                       lr=args.learning_rate * 0.1, 
-                                      weight_decay=0.01)
+                                      weight_decay=0.01, 
+                                      amsgrad=True)
 
     # 使用源域数据进行训练
     train_manager = DataManager(source_train_data, args.epoch, args.batch)
