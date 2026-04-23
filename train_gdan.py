@@ -166,10 +166,10 @@ def main():
     l1_loss = nn.L1Loss()
 
     adam_betas = (0.8, 0.999)
-    cvae_opt = optim.Adam(cvae.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas)
-    dis_opt = optim.Adam(discriminator.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas)
-    reg_opt = optim.Adam(regressor.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas)
-    semantic_transform_opt = optim.Adam(semantic_transform.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas)
+    cvae_opt = optim.Adam(cvae.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas, amsgrad=True)
+    dis_opt = optim.Adam(discriminator.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas, amsgrad=True)
+    reg_opt = optim.Adam(regressor.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas, amsgrad=True)
+    semantic_transform_opt = optim.Adam(semantic_transform.parameters(), lr=args.learning_rate, weight_decay=0.01, betas=adam_betas, amsgrad=True)
 
     # 添加学习率调度器
     try:
