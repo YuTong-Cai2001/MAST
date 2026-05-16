@@ -185,7 +185,7 @@ def main():
         min_lr=min_lr
     )
 
-    train_manager = DataManager(target_train_data, args.epoch, args.batch)
+    train_manager = DataManager(source_train_data, args.epoch, args.batch)
 
     ones = Variable(torch.ones([args.batch, 1]), requires_grad=False).float().cuda()
     zeros = Variable(torch.zeros([args.batch, 1]), requires_grad=False).float().cuda()
