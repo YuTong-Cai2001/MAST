@@ -98,7 +98,7 @@ For these datasets, additional preprocessing is required:
 ├── utils/                  # Utility functions
 ├── pretrain_gdan.py        # Pretraining script
 ├── train_gdan.py           # Training script
-├── eval_gdan.py            # Evaluation script
+├── valtest_gdan.py            # Evaluation script
 └── visualize_comprehensive.py  # Visualization and analysis script
 ```
 
@@ -116,7 +116,7 @@ python train_gdan.py --config configs/cross_domain.yaml
 
 ### Evaluation
 ```
-python eval_gdan.py --config configs/cross_domain.yaml
+python valtest_gdan.py --config configs/cross_domain.yaml
 ```
 
 ## Visualization and Analysis
