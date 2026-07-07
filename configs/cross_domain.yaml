@@ -1,0 +1,94 @@
+# source dataset setting (APY)
+source_data_name: 'APY'
+source_data_root: './data/xlsa17/data'
+source_s_dim: 64
+
+# target dataset setting (CUB)
+target_data_name: 'CUB'
+target_data_root: './data/xlsa17/data'
+target_s_dim: 312
+
+# i/o setting
+result: './result/cross_domain_apy_to_cub'
+ckpt_dir: './data/checkpoints/gdan_cross_domain'
+vae_dir: './data/checkpoints/cvae_cross_domain'
+vae_ckpt: './data/checkpoints/cvae_cross_domain/cvae_cross_APY_to_CUB_final.pkl'
+best_checkpoint: 'gdan_500.pkl'
+
+# flags and environment
+gpu: '0'
+debug: False
+
+# evaluation
+num_samples: 500
+K: 1
+classifier: 'knn'
+C: 10.1
+
+# optimizer setting
+epoch: 500  # 保持原来的epoch数即可
+batch: 64
+steps: -1
+learning_rate: 0.0001  # 降低基础学习率
+g_iter: 1
+d_iter: 1
+save_epoch: 10
+
+# model setting
+x_dim: 2048
+z_dim: 100
+
+enc: '1200 600'
+dec: '600'
+reg: '512'
+dis: '800'
+
+# loss weights
+theta1: 0   # 增加循环一致性损失权重
+theta2: 0   # 增加回归损失权重
+theta3: 0.35  # 稍微增加对抗损失权重
+theta4: 0.015  # 略微增加对比学习权重
+theta5: 0.015  # 略微增加分布对齐权重
+theta6: 0.1  # 语义一致性损失权重
+theta7: 0.1  # 路由多样性损失权重
+
+# 添加新的配置项
+dropout_rate: 0.4
+weight_decay: 0.001
+
+# 添加多Agent系统相关配置
+num_agents: 2  # Agent数量
+agent_weight: 0.1  # Agent策略损失权重
+entropy_weight: 0.02  # 增加协作熵
+
+# Agent特化相关参数
+semantic_attention_dim: 512  # 语义注意力维度
+routing_temperature: 0.5  # Agent路由温度参数
+
+# 预训练相关
+pretrain_epochs: 500  # 预训练轮数
+pretrain_batch_size: 128  # 预训练批次大小
+pretrain_learning_rate: 0.0001  # 预训练学习率
+
+# Agent特化任务权重
+shared_task_weight: 0.4  # 共享特征学习任务权重
+specific_task_weight: 0.4  # 特定特征学习任务权重
+bridge_task_weight: 0.2  # 特征桥接任务权重
+
+# 早停和学习率调度
+early_stopping_patience: 40  # 显著增加早停耐心值
+lr_scheduler_patience: 15  # 显著增加学习率调度耐心值
+lr_scheduler_factor: 0.8  # 使用更温和的学习率衰减
+min_lr: 1e-6  # 最小学习率
+
+# 梯度裁剪
+gradient_clip: 1.0  # 梯度裁剪阈值
+
+# 添加新的权重参数
+semantic_consistency_weight: 0.2  # 增加语义一致性约束
+competition_weight: 0.1  # 增加Agent间竞争
+contrastive_weight: 0.1
+
+# 减小隐藏层维度
+hidden_dims: [256, 128]  # 原来是[512, 256]
+  
