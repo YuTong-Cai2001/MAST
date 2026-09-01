@@ -32,15 +32,10 @@ if args.config is not None:
 
 # 添加源域和目标域的配置加载
 source_data_dir = Path(args.source_data_root)
-target_data_dir = Path(args.target_data_root)
-
 source_dir = source_data_dir / Path(args.source_data_name)
-target_dir = target_data_dir / Path(args.target_data_name)
 
 source_att_path = source_dir / Path('att_splits.mat')
 source_res_path = source_dir / Path('res101.mat')
-target_att_path = target_dir / Path('att_splits.mat')
-target_res_path = target_dir / Path('res101.mat')
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
@@ -57,16 +52,12 @@ logMaster = Logger(str(log_file))
 
 def main():
     logger = logMaster.get_logger('main')
-    logger.info('loading source and target domain data...')
+    logger.info('loading source-domain images...')
     
     # 加载源域（APY）数据
     source_att_feats, source_train_data, source_val_data, source_test_data, source_test_s_data, source_classes = \
         load_data(att_path=source_att_path, res_path=source_res_path)
     
-    # 加载目标域（CUB）数据 - 注释更新
-    target_att_feats, target_train_data, target_val_data, target_test_data, target_test_s_data, target_classes = \
-        load_data(att_path=target_att_path, res_path=target_res_path)
-
     logger.info('building model...')
     
     # 首先初始化CVAE
@@ -82,8 +73,8 @@ def main():
         target_dim=args.target_s_dim,
         source_dim=args.source_s_dim,
         num_agents=args.num_agents,
-        hidden_dims=[512, 256],
-        dropout_rate=0.3
+        hidden_dims=args.hidden_dims,
+        dropout_rate=args.dropout_rate
     ).cuda()
     
     # 然后初始化优化器
@@ -112,7 +103,9 @@ def main():
             S = Variable(torch.from_numpy(source_att_feats[Y])).float().cuda()
 
             # 使用多Agent语义转换
-            transformed, agent_weights, policy_values = semantic_transform(S)
+            transformed, agent_weights, policy_values, _ = semantic_transform(
+                S, domain="source"
+            )
             
             # VAE重建损失 - 添加归一化
             Xp, mu, log_sigma = cvae.forward(X, transformed)
@@ -120,7 +113,9 @@ def main():
             loss_vae = loss_vae / X.size(0)  # 按批次大小归一化
 
             # Agent多样性损失 - 调整权重
-            diversity_loss = -(agent_weights * torch.log(agent_weights + 1e-6)).sum(1).mean()
+            routing_entropy = -(
+                agent_weights * torch.log(agent_weights.clamp_min(1e-8))
+            ).sum(1).mean()
             
             # Agent策略损失 - 修改目标值和计算方式
             agent_loss = 0
@@ -132,7 +127,7 @@ def main():
             # 总损失 - 调整权重
             total_loss = loss_vae + \
                         args.agent_weight * 0.01 * agent_loss + \
-                        args.entropy_weight * 0.01 * diversity_loss
+                        args.entropy_weight * 0.01 * (-routing_entropy)
 
             total_loss.backward()
             
@@ -152,7 +147,7 @@ def main():
             logger.info(f'epoch: {epoch+1:4}, avg_loss: {avg_loss:.5f}, ' + 
                        f'vae_loss: {loss_vae.item():.5f}, ' +
                        f'agent_loss: {agent_loss.item():.5f}, ' +
-                       f'diversity_loss: {diversity_loss.item():.5f}')
+                       f'routing_entropy: {routing_entropy.item():.5f}')
             
             # 保存检查点
             filename = f'cvae_cross_{args.source_data_name}_to_{args.target_data_name}_{epoch+1}.pkl'
@@ -172,7 +167,8 @@ def main():
                     'avg_loss': avg_loss,
                     'vae_loss': loss_vae.item(),
                     'agent_loss': agent_loss.item(),
-                    'diversity_loss': diversity_loss.item()
+                    'routing_entropy': routing_entropy.item(),
+                    'routing_objective': 'maximize_entropy'
                 }
             }
             torch.save(states, str(save_path))
@@ -195,7 +191,8 @@ def main():
             'avg_loss': avg_loss,
             'vae_loss': loss_vae.item(),
             'agent_loss': agent_loss.item(),
-            'diversity_loss': diversity_loss.item()
+            'routing_entropy': routing_entropy.item(),
+            'routing_objective': 'maximize_entropy'
         }
     }
     torch.save(final_states, str(final_save_path))

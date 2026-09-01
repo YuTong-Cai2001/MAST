@@ -57,7 +57,7 @@ dropout_rate: 0.4
 weight_decay: 0.001
 
 # 添加多Agent系统相关配置
-num_agents: 2  # Agent数量
+num_agents: 3  # 论文设置：3个Agent
 agent_weight: 0.1  # Agent策略损失权重
 entropy_weight: 0.02  # 增加协作熵
 
@@ -85,10 +85,8 @@ min_lr: 1e-6  # 最小学习率
 gradient_clip: 1.0  # 梯度裁剪阈值
 
 # 添加新的权重参数
-semantic_consistency_weight: 0.2  # 增加语义一致性约束
 competition_weight: 0.1  # 增加Agent间竞争
 contrastive_weight: 0.1
 
 # 减小隐藏层维度
 hidden_dims: [256, 128]  # 原来是[512, 256]
-  

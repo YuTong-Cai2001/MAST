@@ -17,6 +17,13 @@ parser.add_argument('-cd', '--ckpt_dir', metavar='DIR', default='./checkpoints',
                     help='path to checkpoint directory')
 parser.add_argument('-v', '--vae_ckpt', metavar='FILE', default='./checkpoints/cvae_800.pkl',
                     help='path to data directory')
+parser.add_argument('--source_data_name', default='APY')
+parser.add_argument('--source_data_root', default='./data/xlsa17/data')
+parser.add_argument('--source_s_dim', default=64, type=int)
+parser.add_argument('--target_data_name', default='CUB')
+parser.add_argument('--target_data_root', default='./data/xlsa17/data')
+parser.add_argument('--target_s_dim', default=312, type=int)
+parser.add_argument('--vae_dir', default='./checkpoints/cvae_cross_domain')
 
 # flags
 parser.add_argument('--debug', action='store_true',
@@ -73,6 +80,10 @@ parser.add_argument('--theta4', type=float, default=0.1,
                     help='weight for contrastive loss')
 parser.add_argument('--theta5', type=float, default=0.1, 
                     help='weight for distribution alignment')
+parser.add_argument('--theta6', type=float, default=0.1,
+                    help='weight for semantic consistency')
+parser.add_argument('--theta7', type=float, default=0.1,
+                    help='weight for high-entropy routing regularization')
 
 parser.add_argument('--num_agents', type=int, default=3,
                     help='number of semantic agents')
@@ -80,4 +91,12 @@ parser.add_argument('--agent_weight', type=float, default=0.1,
                     help='weight for agent policy loss')
 parser.add_argument('--entropy_weight', type=float, default=0.01,
                     help='weight for collaboration entropy')
-
+parser.add_argument('--dropout_rate', type=float, default=0.4,
+                    help='dropout used by the semantic transform')
+parser.add_argument('--weight_decay', type=float, default=0.001)
+parser.add_argument('--hidden_dims', type=int, nargs=2, default=[512, 256])
+parser.add_argument('--early_stopping_patience', type=int, default=40)
+parser.add_argument('--lr_scheduler_patience', type=int, default=15)
+parser.add_argument('--lr_scheduler_factor', type=float, default=0.8)
+parser.add_argument('--min_lr', type=float, default=1e-6)
+parser.add_argument('--gradient_clip', type=float, default=1.0)

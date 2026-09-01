@@ -5,11 +5,17 @@ from sklearn.metrics.pairwise import cosine_distances
 import datetime
 
 
+def load_semantic_attributes(att_path):
+    """Load public class attributes without opening any image feature file."""
+    att_feats_dat = sio.loadmat(str(att_path))
+    return att_feats_dat['att'].transpose().astype(np.float32, copy=False)
+
+
 def load_data(att_path, res_path):
     att_feats_dat = sio.loadmat(str(att_path))
     res_feats_dat = sio.loadmat(str(res_path))
 
-    att_feats = att_feats_dat['att'].transpose()
+    att_feats = att_feats_dat['att'].transpose().astype(np.float32, copy=False)
     id_train = att_feats_dat['train_loc'].squeeze() - 1
     id_val = att_feats_dat['val_loc'].squeeze() - 1
     id_test_unseen = att_feats_dat['test_unseen_loc'].squeeze() - 1
@@ -106,5 +112,4 @@ def get_negative_samples(Y:list, classes):
             yy = np.random.choice(classes, 1)
         Yp.append(yy[0])
     return Yp
-
 
